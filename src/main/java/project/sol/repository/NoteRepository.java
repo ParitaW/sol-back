@@ -1,5 +1,6 @@
 package project.sol.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -12,6 +13,6 @@ import project.sol.model.Note;
 public interface NoteRepository extends MongoRepository<Note, String>{
     Optional<Note> findById(String id);
 
-    Optional<Note> findByDatetime(String datetime);
+    List<Note> findByDatetimeStringWith(String datePrefix);
     
 }
