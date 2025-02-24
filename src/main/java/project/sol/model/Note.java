@@ -1,7 +1,5 @@
 package project.sol.model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -12,15 +10,16 @@ public class Note {
     @Id
     private String id;
     private String text;
-    private String datetime;
+    private String date;
+    private String time;
     private List<String> tags;
-
     private String imageId; // reference to GridFS image id
 
     // constructor
-    public Note(String text, String datetime, List<String> tags, String imageId) {
+    public Note(String text, String date, String time, List<String> tags, String imageId) {
         this.text = text;
-        this.datetime = datetime;
+        this.date = date;
+        this.time = time;
         this.tags = tags;
         this.imageId = imageId;
     }
@@ -45,12 +44,20 @@ public class Note {
         this.text = text;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public List<String> getTags() {

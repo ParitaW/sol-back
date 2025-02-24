@@ -3,9 +3,7 @@ package project.sol.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
+import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -32,11 +30,21 @@ public class NoteService {
         return noteRepository.findAll();
     }
 
-    public List<Note> getNoteByDate(String datetime) {
-        return noteRepository.findByDatetimeStringWith(datetime);
+    public List<Note> getNoteByDate(String date) {
+        return noteRepository.findByDateStartingWith(date);
     }
 
-    public Note addNote(String text, String datetime, List<String> tags, MultipartFile image) throws IOException {
+    public List<Note> getImageByMonth(int year, int month){
+        // LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
+        // LocalDateTime end = start.plusMonths(1);
+        // format date prefix
+        String datePrefix = String.format("%04d-%02d", year, month); // yyyy-MM
+
+        List<Note> notes = noteRepository.findByDateStartingWith(datePrefix);
+        return notes.stream().filter(note-> note.getImageId()!=null && !note.getImageId().isEmpty()).collect(Collectors.toList());
+    }
+
+    public Note addNote(String text, String date, String time, List<String> tags, MultipartFile image) throws IOException {
         // upload image to gridFS
         ObjectId imageId = null;
         if (image != null && !image.isEmpty()) {
@@ -47,7 +55,7 @@ public class NoteService {
         }
 
         // save note to the database
-        Note note = new Note(text, datetime, tags, imageId != null ? imageId.toHexString() : null);
+        Note note = new Note(text, date, time, tags, imageId != null ? imageId.toHexString() : null);
         return noteRepository.save(note);
     }
 
@@ -61,6 +69,8 @@ public class NoteService {
     }
 
     public void deleteAllNotes() {
+        // delete images from gridFS
+        gridFsTemplate.delete(new org.springframework.data.mongodb.core.query.Query());
         noteRepository.deleteAll();
     }
 

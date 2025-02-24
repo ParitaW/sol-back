@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +25,15 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
-    //for testing notes
+    // for testing notes
     @GetMapping
     public List<Note> getNotes() {
         return noteService.getNotes();
     }
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Note> addNote(@RequestParam("text") String text, @RequestParam("datetime") String datetime,
+    public ResponseEntity<Note> addNote(@RequestParam("text") String text, @RequestParam("date") String date,
+            @RequestParam("time") String time,
             @RequestParam(value = "tags", required = false) List<String> tags,
             @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
 
@@ -43,7 +42,7 @@ public class NoteController {
 
         }
         // S parsedDateTime = LocalDateTime.parse(datetime);
-        Note addNote = noteService.addNote(text, datetime, tags, image);
+        Note addNote = noteService.addNote(text, date, time, tags, image);
         return ResponseEntity.ok(addNote);
     }
 
@@ -51,7 +50,7 @@ public class NoteController {
     public ResponseEntity<?> getNoteByDate(@PathVariable String date) {
         try {
             // validate date format
-            LocalDateTime.parse(date);
+            // LocalDateTime.parse(date);
 
             List<Note> notes = noteService.getNoteByDate(date);
             if (notes.isEmpty()) {
@@ -62,6 +61,19 @@ public class NoteController {
             return ResponseEntity.badRequest().body("Invalid date format: Please use yyyy-MM-dd");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error retrieving note by date: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/calendar/{year}/{month}")
+    public ResponseEntity<?> getCalendarImageView(@PathVariable int year, @PathVariable int month){
+        try{
+            List<Note> notes = noteService.getImageByMonth(year, month);
+            if(notes.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(notes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error retrieving image by month: " + e.getMessage());
         }
     }
 

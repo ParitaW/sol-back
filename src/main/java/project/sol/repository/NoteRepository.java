@@ -1,5 +1,6 @@
 package project.sol.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,9 @@ import project.sol.model.Note;
 public interface NoteRepository extends MongoRepository<Note, String>{
     Optional<Note> findById(String id);
 
-    List<Note> findByDatetimeStringWith(String datePrefix);
+    List<Note> findByDateStartingWith(String datePrefix);
+    // List<Note> findByDateBetweenAndImageIdIsNotNull(LocalDateTime start, LocalDateTime end);
+
+    // List<Note> findByDateBetween(LocalDateTime start, LocalDateTime end);
     
 }
