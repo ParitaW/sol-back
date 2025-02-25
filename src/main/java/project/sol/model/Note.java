@@ -9,15 +9,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Note {
     @Id
     private String id;
-    private String text;
+    private String content;
     private String date;
     private String time;
     private List<String> tags;
     private String imageId; // reference to GridFS image id
 
     // constructor
-    public Note(String text, String date, String time, List<String> tags, String imageId) {
-        this.text = text;
+    public Note(String content, String date, String time, List<String> tags, String imageId) {
+        this.content = content;
         this.date = date;
         this.time = time;
         this.tags = tags;
@@ -36,12 +36,12 @@ public class Note {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getDate() {

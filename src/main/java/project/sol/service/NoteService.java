@@ -1,13 +1,14 @@
 package project.sol.service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class NoteService {
         return notes.stream().filter(note-> note.getImageId()!=null && !note.getImageId().isEmpty()).collect(Collectors.toList());
     }
 
-    public Note addNote(String text, String date, String time, List<String> tags, MultipartFile image) throws IOException {
+    public Note addNote(String content, String date, String time, List<String> tags, MultipartFile image) throws IOException {
         // upload image to gridFS
         ObjectId imageId = null;
         if (image != null && !image.isEmpty()) {
@@ -55,7 +56,7 @@ public class NoteService {
         }
 
         // save note to the database
-        Note note = new Note(text, date, time, tags, imageId != null ? imageId.toHexString() : null);
+        Note note = new Note(content, date, time, tags, imageId != null ? imageId.toHexString() : null);
         return noteRepository.save(note);
     }
 
@@ -87,6 +88,15 @@ public class NoteService {
 
         if (file != null) {
             return gridFsTemplate.getResource(file);
+        }
+        return null;
+    }
+
+    public byte[] getImageById(String imageId) throws IOException {
+        GridFSFile file = gridFsTemplate.findOne(new Query().addCriteria(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(imageId)));
+        if (file != null) {
+            GridFsResource resource = gridFsTemplate.getResource(file);
+            return resource.getInputStream().readAllBytes();
         }
         return null;
     }
