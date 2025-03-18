@@ -1,5 +1,13 @@
 services:
   - name: sol-back-spring-boot
+    env: docker
     plan: free
     type: web
     runtime: docker
+    build_command: mvn clean package -DskipTests
+    dockerfile_path: Dockerfile
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        sync: false
