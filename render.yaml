@@ -1,0 +1,5 @@
+services:
+  - name: sol-back-spring-boot
+    plan: free
+    type: web
+    runtime: docker
