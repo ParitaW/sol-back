@@ -35,6 +35,10 @@ public class NoteService {
         return noteRepository.findByDateStartingWith(date);
     }
 
+    public Note getNoteById(String id){
+        return noteRepository.findById(id).orElse(null);
+    }
+
     public List<Note> getImageByMonth(int year, int month){
         // LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
         // LocalDateTime end = start.plusMonths(1);
