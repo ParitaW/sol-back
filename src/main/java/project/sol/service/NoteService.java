@@ -8,7 +8,6 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -39,14 +38,14 @@ public class NoteService {
         return noteRepository.findById(id).orElse(null);
     }
 
-    public List<Note> getImageByMonth(int year, int month){
+    public List<Note> getNoteByMonth(int year, int month){
         // LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
         // LocalDateTime end = start.plusMonths(1);
         // format date prefix
         String datePrefix = String.format("%04d-%02d", year, month); // yyyy-MM
 
-        List<Note> notes = noteRepository.findByDateStartingWith(datePrefix);
-        return notes.stream().filter(note-> note.getImageId()!=null && !note.getImageId().isEmpty()).collect(Collectors.toList());
+        //        return notes.stream().filter(note-> note.getImageId()!=null && !note.getImageId().isEmpty()).collect(Collectors.toList());
+        return noteRepository.findByDateStartingWith(datePrefix);
     }
 
     public Note addNote(String content, String date, String time, List<String> tags, MultipartFile image) throws IOException {

@@ -79,7 +79,7 @@ public class NoteController {
     @GetMapping("/calendar/{year}/{month}")
     public ResponseEntity<?> getCalendarImageView(@PathVariable int year, @PathVariable int month){
         try{
-            List<Note> notes = noteService.getImageByMonth(year, month);
+            List<Note> notes = noteService.getNoteByMonth(year, month);
             if(notes.isEmpty()){
                 return ResponseEntity.notFound().build();
             }
