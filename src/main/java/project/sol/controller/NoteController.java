@@ -43,12 +43,12 @@ public class NoteController {
             return ResponseEntity.badRequest().build();
 
         }
-        // S parsedDateTime = LocalDateTime.parse(datetime);
+        // SparedDateTime = LocalDateTime.parse(datetime);
         Note addNote = noteService.addNote(content, date, time, tags, image);
         return ResponseEntity.ok(addNote);
     }
 
-    @GetMapping("/{date}")
+    @GetMapping("/date/{date}")
     public ResponseEntity<?> getNoteByDate(@PathVariable String date) {
         try {
             // validate date format
@@ -63,6 +63,16 @@ public class NoteController {
             return ResponseEntity.badRequest().body("Invalid date format: Please use yyyy-MM-dd");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error retrieving note by date: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<?> getNoteById(@PathVariable String id){
+        try {
+            Note notes = noteService.getNoteById(id);
+            return ResponseEntity.ok(notes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error retrieving note by id: " + e.getMessage());
         }
     }
 
