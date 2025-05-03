@@ -100,6 +100,15 @@ public class NoteService {
     }
 
     public void deleteNoteById(String id) {
+        Optional<Note> noteOptional=noteRepository.findById(id);
+        // ลบรูปใน GridFS
+        if(noteOptional.isPresent()){
+            Note note=noteOptional.get();
+            if(note.getImageId() != null){
+                gridFsTemplate.delete(Query.query(Criteria.where("_id").is(note.getImageId())));
+            }
+        }
+        // ลบ note in database
         noteRepository.deleteById(id);
     }
 
