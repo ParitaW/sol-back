@@ -7,14 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import project.sol.model.Note;
@@ -34,10 +27,11 @@ public class NoteController {
     }
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Note> addNote(@RequestParam("content") String content, @RequestParam("date") String date,
-            @RequestParam("time") String time,
-            @RequestParam(value = "tags", required = false) List<String> tags,
-            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<Note> addNote(@RequestParam("content") String content,
+                                        @RequestParam("date") String date,
+                                        @RequestParam("time") String time,
+                                        @RequestParam(value = "tags", required = false) List<String> tags,
+                                        @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
 
         if (image != null && image.getSize() > 10 * 1024 * 1024) { // 10MB
             return ResponseEntity.badRequest().build();
@@ -46,6 +40,21 @@ public class NoteController {
         // SparedDateTime = LocalDateTime.parse(datetime);
         Note addNote = noteService.addNote(content, date, time, tags, image);
         return ResponseEntity.ok(addNote);
+    }
+
+    @PutMapping(value = "/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Note> editNote(@PathVariable("id") String id,
+                                         @RequestParam("content") String content,
+                                         @RequestParam("date") String date,
+                                         @RequestParam("time") String time,
+                                         @RequestParam(value = "tags", required = false) List<String> tags,
+                                         @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
+        if (image != null && image.getSize() > 10 * 1024 * 1024) { // 10MB
+            return ResponseEntity.badRequest().build();
+        }
+        // SparedDateTime = LocalDateTime.parse(datetime);
+        Note editNote = noteService.editNote(id, content, date, time, tags, image);
+        return ResponseEntity.ok(editNote);
     }
 
     @GetMapping("/date/{date}")
@@ -67,7 +76,7 @@ public class NoteController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<?> getNoteById(@PathVariable String id){
+    public ResponseEntity<?> getNoteById(@PathVariable String id) {
         try {
             Note notes = noteService.getNoteById(id);
             return ResponseEntity.ok(notes);
@@ -77,10 +86,10 @@ public class NoteController {
     }
 
     @GetMapping("/calendar/{year}/{month}")
-    public ResponseEntity<?> getCalendarImageView(@PathVariable int year, @PathVariable int month){
-        try{
+    public ResponseEntity<?> getCalendarImageView(@PathVariable int year, @PathVariable int month) {
+        try {
             List<Note> notes = noteService.getNoteByMonth(year, month);
-            if(notes.isEmpty()){
+            if (notes.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(notes);
