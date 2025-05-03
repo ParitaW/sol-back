@@ -98,9 +98,10 @@ public class NoteController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteNoteById(@PathVariable String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteNoteById(@PathVariable String id) {
         noteService.deleteNoteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     // for testing
