@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +18,22 @@ import project.sol.service.NoteService;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/notes")
+@Tag(name = "Daily note", description = "APIs for daily note module")
 public class NoteController {
-    @Autowired
-    private NoteService noteService;
+    private final NoteService noteService;
+
+    public NoteController(NoteService noteService) {
+        this.noteService = noteService;
+    }
 
     // for testing notes
+    @Operation(summary = "Get all notes", description = "all notes")
     @GetMapping
     public List<Note> getNotes() {
         return noteService.getNotes();
     }
 
+    @Operation(summary = "Crate note", description = "Add a new note to the system")
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Note> addNote(@RequestParam("content") String content,
                                         @RequestParam("date") String date,
@@ -42,6 +50,7 @@ public class NoteController {
         return ResponseEntity.ok(addNote);
     }
 
+    @Operation(summary = "Edit note by id", description = "Edit exist note")
     @PutMapping(value = "/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Note> editNote(@PathVariable("id") String id,
                                          @RequestParam("content") String content,
@@ -57,6 +66,7 @@ public class NoteController {
         return ResponseEntity.ok(editNote);
     }
 
+    @Operation(summary = "Get note by date", description = "Each date note")
     @GetMapping("/date/{date}")
     public ResponseEntity<?> getNoteByDate(@PathVariable String date) {
         try {
@@ -75,6 +85,7 @@ public class NoteController {
         }
     }
 
+    @Operation(summary = "Get note by ID", description = "each note")
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getNoteById(@PathVariable String id) {
         try {
@@ -85,6 +96,7 @@ public class NoteController {
         }
     }
 
+    @Operation(summary = "Get note by year/month", description = "")
     @GetMapping("/calendar/{year}/{month}")
     public ResponseEntity<?> getCalendarImageView(@PathVariable int year, @PathVariable int month) {
         try {
@@ -98,6 +110,7 @@ public class NoteController {
         }
     }
 
+    @Operation(summary = "Delete note by id", description = "")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteNoteById(@PathVariable String id) {
         noteService.deleteNoteById(id);
@@ -105,6 +118,7 @@ public class NoteController {
     }
 
     // for testing
+    @Operation(summary = "Delete all note", description = "")
     @DeleteMapping("/delete")
     public void deleteAllNotes() {
         noteService.deleteAllNotes();

@@ -2,6 +2,8 @@ package project.sol.controller;
 
 import java.io.IOException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,15 @@ import project.sol.service.NoteService;
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Utils", description = "APIs for utils")
 public class UtilController {
-    @Autowired
-    private NoteService noteService;
-    
+    private final NoteService noteService;
+
+    public UtilController(NoteService noteService) {
+        this.noteService = noteService;
+    }
+
+    @Operation(summary = "Get image by id", description = "Get image")
     @GetMapping("/images/{imageId}")
     public ResponseEntity<byte[]> getImage(@PathVariable String imageId) throws IOException {
         byte[] imageData = noteService.getImageById(imageId);
