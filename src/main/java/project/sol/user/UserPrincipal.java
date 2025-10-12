@@ -8,9 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
-    private final transient Users user;
+    private final transient UserAccounts user;
 
-    public UserPrincipal(Users user) {
+    public UserPrincipal(UserAccounts user) {
         this.user = user;
     }
 

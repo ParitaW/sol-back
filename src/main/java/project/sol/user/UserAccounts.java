@@ -1,12 +1,10 @@
 package project.sol.user;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
-public class Users {
+public class UserAccounts {
     @Id
     private String id;
     private String uid;
@@ -18,7 +16,7 @@ public class Users {
     private String lastLoginAt;
 
     // constructor
-    public Users(){
+    public UserAccounts(){
         
     }
 
