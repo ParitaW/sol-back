@@ -35,7 +35,7 @@ public class AuthenticationService {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public UserAccounts register(RegisterRequestDTO userDTO) {
-        // 🔍 ตรวจสอบว่า email หรือ username เคยถูกใช้แล้วหรือยัง
+        // 🔍 Check if the email or username has already been used
         UserAccounts existingUser = userAccountRepository.findByEmail(userDTO.getEmail());
         if (existingUser != null) {
             throw new RuntimeException("Email already registered");
