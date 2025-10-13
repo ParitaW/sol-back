@@ -84,5 +84,4 @@ public class UserAccounts {
         this.lastLoginAt = lastLoginAt;
     }
 
-    
 }
