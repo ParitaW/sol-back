@@ -17,7 +17,6 @@ public class UserAccounts {
 
     // constructor
     public UserAccounts(){
-        
     }
 
     public String getId() {
