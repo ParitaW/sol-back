@@ -1,31 +1,20 @@
-package project.sol.user;
+package project.sol.authentication.DTO;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "user-accounts")
-public class UserAccounts {
-    @Id
-    private String id;
+public class RegisterRequestDTO {
     private String uid;
     private String username;
     private String email;
     private String password;
     private String createdAt;
     private String updatedAt;
-    private String lastLoginAt;
 
-    // constructor
-    public UserAccounts(){
-        
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public RegisterRequestDTO(String uid, String username, String email, String password, String createdAt, String updatedAt) {
+        this.uid = uid;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getUid() {
@@ -75,14 +64,4 @@ public class UserAccounts {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    public String getLastLoginAt() {
-        return lastLoginAt;
-    }
-
-    public void setLastLoginAt(String lastLoginAt) {
-        this.lastLoginAt = lastLoginAt;
-    }
-
-    
 }

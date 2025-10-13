@@ -32,8 +32,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
-            (request -> request.requestMatchers("/api/auth/register", "/api/auth/login")
+            (request -> request.requestMatchers("/api/auth/**")
             .permitAll()
+            .requestMatchers("/api/notes/**").authenticated() // This requires valid JWT
             .anyRequest()
             .authenticated())
         );

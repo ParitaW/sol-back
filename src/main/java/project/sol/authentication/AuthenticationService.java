@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.sol.authentication.DTO.LoginRequestDTO;
 import project.sol.authentication.DTO.LoginResponseDTO;
+import project.sol.authentication.DTO.RegisterRequestDTO;
 import project.sol.jwt.JwtService;
 import project.sol.user.UserAccounts;
 import project.sol.user.UserAccountRepository;
@@ -33,15 +34,24 @@ public class AuthenticationService {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public UserAccounts register(UserAccounts user) {
+    public UserAccounts register(RegisterRequestDTO userDTO) {
+        // 🔍 ตรวจสอบว่า email หรือ username เคยถูกใช้แล้วหรือยัง
+        UserAccounts existingUser = userAccountRepository.findByEmail(userDTO.getEmail());
+        if (existingUser != null) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        // create new user
+        UserAccounts user = new UserAccounts();
         // set uid with format sol-xxxxx and encode password
         user.setUid("sol-"
                 + RandomStringUtils.random(5, 0, 0, true, true, null, new java.security.SecureRandom()).toLowerCase());
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(encoder.encode(userDTO.getPassword()));
         String now = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         user.setCreatedAt(now);
         user.setUpdatedAt(now);
-        // user.setLastLoginAt(now);
         return userAccountRepository.save(user);
     }
 

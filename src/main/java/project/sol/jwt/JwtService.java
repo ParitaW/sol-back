@@ -1,15 +1,16 @@
 package project.sol.jwt;
 
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,24 +21,25 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    private final String secretKey;
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    public JwtService() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGenerator.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Failed to generate secret key", e);
-        }
-    }
+    // public JwtService() {
+    //     try {
+    //         KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA384");
+    //         SecretKey sk = keyGenerator.generateKey();
+    //         secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+    //     } catch (NoSuchAlgorithmException e) {
+    //         throw new RuntimeException("Failed to generate secret key", e);
+    //     }
+    // }
 
-    public String generateToken(String username) {
+    public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(username)
+                .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .and()
@@ -46,11 +48,14 @@ public class JwtService {
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 48) {
+            throw new IllegalArgumentException(keyBytes.length + " Secret key must be at least 384 bits (48 bytes) for HS384");
+        }
+        return new SecretKeySpec(keyBytes, "HmacSHA384");
     }
 
-    public String extractUserName(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -64,8 +69,16 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUserName(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final String email = extractEmail(token);
+            
+            boolean emailMatches = email.equals(userDetails.getUsername());
+            boolean tokenNotExpired = !isTokenExpired(token);
+
+            return emailMatches && tokenNotExpired;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {
