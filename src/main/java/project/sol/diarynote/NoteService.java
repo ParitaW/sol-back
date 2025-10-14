@@ -104,13 +104,11 @@ public class NoteService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found");
         }
 
-        Notes existingNotes = existedNote;
-
         // ถ้ามีรูปใหม่ ส่งเข้ามา -> ลบรูปเดิม (ถ้ามี) แล้วอัปโหลดใหม่
         if (image != null && !image.isEmpty()) {
             // ลบรูปเก่าออกจาก GridFS (ถ้ามี)
-            if (existingNotes.getImageId() != null) {
-                ObjectId objectId = new ObjectId(existingNotes.getImageId());
+            if (existedNote.getImageId() != null) {
+                ObjectId objectId = new ObjectId(existedNote.getImageId());
                 gridFsTemplate.delete(Query.query(Criteria.where("_id").is(objectId)));
             }
 
@@ -118,18 +116,18 @@ public class NoteService {
             Document metadata = new Document();
             ObjectId newImageId = gridFsTemplate.store(image.getInputStream(), image.getOriginalFilename(),
                     image.getContentType(), metadata);
-            existingNotes.setImageId(newImageId.toHexString());
+            existedNote.setImageId(newImageId.toHexString());
         }
 
         String now = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
         // update note date
-        existingNotes.setDatetime(datetime);
-        existingNotes.setTags(tags);
-        existingNotes.setNoteContent(noteContent);
-        existingNotes.setUpdatedAt(now);
+        existedNote.setDatetime(datetime);
+        existedNote.setTags(tags);
+        existedNote.setNoteContent(noteContent);
+        existedNote.setUpdatedAt(now);
 
-        return noteRepository.save(existingNotes);
+        return noteRepository.save(existedNote);
     }
 
     public void deleteNoteById(String id) {
