@@ -1,4 +1,4 @@
-package project.sol.model;
+package project.sol.diarynote;
 
 import java.util.List;
 

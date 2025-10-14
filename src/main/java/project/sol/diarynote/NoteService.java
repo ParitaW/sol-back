@@ -1,9 +1,8 @@
-package project.sol.service;
+package project.sol.diarynote;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -16,9 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
-
-import project.sol.model.Note;
-import project.sol.repository.NoteRepository;
 
 @Service
 public class NoteService {

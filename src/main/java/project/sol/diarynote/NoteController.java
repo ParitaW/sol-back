@@ -1,4 +1,4 @@
-package project.sol.controller;
+package project.sol.diarynote;
 
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
@@ -6,14 +6,10 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import project.sol.model.Note;
-import project.sol.service.NoteService;
 
 @CrossOrigin
 @RestController

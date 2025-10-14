@@ -1,12 +1,10 @@
-package project.sol.repository;
+package project.sol.diarynote;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
-import project.sol.model.Note;
 
 
 @Repository
