@@ -1,8 +1,10 @@
 # Build Stage
 FROM maven:3.9.0-eclipse-temurin-19 AS build
 WORKDIR /app
+COPY pom.xml .
+RUN mvn -q -DskipTests dependency:go-offline
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 # Run Stage
 FROM openjdk:17-jdk-slim
