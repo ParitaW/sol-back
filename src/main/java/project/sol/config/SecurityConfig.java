@@ -27,17 +27,16 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
-            (request -> request.requestMatchers("/api/auth/**")
-            .permitAll()
-            .requestMatchers("/api/notes/**").authenticated() // This requires valid JWT
-            .anyRequest()
-            .authenticated())
-        );
+                (request -> request.requestMatchers("/api/auth/**")
+                        .permitAll()
+                        .requestMatchers("/api/notes/**", "/api/images/**").authenticated() // This requires valid JWT
+                        .anyRequest()
+                        .authenticated()));
         http.httpBasic(Customizer.withDefaults()); // Enable HTTP Basic Authentication
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
